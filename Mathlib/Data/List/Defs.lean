@@ -468,4 +468,21 @@ theorem length_mapAccumr₂ :
 
 end MapAccumr
 
+instance instCoeType {α : Type u} : CoeSort (List α) Type := ⟨(Fin ·.length)⟩
+
+section Delab
+
+open Lean PrettyPrinter.Delaborator SubExpr
+/-- For terms that match the `CoeSort` instance's body, pretty print as `↥S`
+rather than as `{ x // x ∈ S }`. The discriminating feature is that membership
+uses the `SetLike.instMembership` instance. -/
+@[app_delab Fin]
+meta def delabSubtypeSetLike : Delab := whenPPOption getPPNotation do
+  let #[body] := (← getExpr).getAppArgs | failure
+  guard <| body.isAppOf ``List.length
+  let S ← withAppArg <| withNaryArg 1 delab
+  `(↥$S)
+
+end Delab
+
 end List
