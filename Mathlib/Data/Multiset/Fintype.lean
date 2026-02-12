@@ -5,8 +5,8 @@ Authors: Kyle Miller
 -/
 module
 
-public import Mathlib.Data.Fintype.Card
-public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Data.Multiset.Bind
+public import Mathlib.Data.Multiset.Dedup
 
 /-!
 # Multiset coercion to type
@@ -36,19 +36,100 @@ multiset enumeration
 
 @[expose] public section
 
+universe u
 
-variable {α β : Type*} [DecidableEq α] [DecidableEq β] {m : Multiset α}
+variable {α : Type u}
+
+namespace List
+
+variable {l : List α} [DecidableEq α]
+
+def attachCount (l : List α) : List ((x : α) × Fin (l.count x)) :=
+  l.dedup.sigma fun _ => List.finRange _
+
+@[simp, grind =]
+theorem mem_attachCount {xc} : xc ∈ l.attachCount ↔ xc.1 ∈ l := by
+  simp only [attachCount, mem_sigma, mem_dedup, mem_finRange, and_true]
+
+theorem nodup_attachCount : l.attachCount.Nodup :=
+  List.Nodup.sigma l.nodup_dedup (fun _ => List.nodup_finRange _)
+
+theorem complete_attachCount {xc : (x : α) × Fin (l.count x)} : xc ∈ l.attachCount :=
+  mem_attachCount.mpr <| List.count_pos_iff.mp <| Fin.pos xc.2
+
+
+theorem jsadjh : l.attachCount = (finRange l.length).map l.idxToSigmaCount := by
+  apply List.ext_getElem
+  simp
+
+theorem blahj : l.attachCount.map (l.sigmaCountToIdx) = finRange l.length := by
+  ext
+  simp
+
+theorem blahj : l.attachCount.map (l.get ∘ l.sigmaCountToIdx) = l := by
+  rw [map_eq_iff]
+
+end List
+
+namespace Multiset
+
+variable {m : Multiset α} [DecidableEq α]
+
+def attachCount (m : Multiset α) : Multiset ((x : α) × Fin (m.count x)) :=
+  m.dedup.sigma fun _ => ofList (List.finRange _)
+
+@[simp, grind =]
+theorem mem_attachCount {xc} : xc ∈ m.attachCount ↔ xc.1 ∈ m := by
+  simp only [attachCount, mem_sigma, mem_dedup, mem_coe, List.mem_finRange, and_true]
+
+theorem nodup_attachCount : m.attachCount.Nodup :=
+  Multiset.Nodup.sigma m.nodup_dedup (fun _ => List.nodup_finRange _)
+
+theorem coe_attachCount {l : List α} :
+    (ofList l).attachCount = ofList ((l.attachCount).map
+    (Sigma.map (·) fun (a : α) => (Fin.cast (coe_count a l).symm))) := by
+  unfold Sigma.map
+  refine (nodup_attachCount.ext ?_).mpr ?_
+  · simp only [coe_nodup, List.nodup_map_iff_inj_on List.nodup_attachCount, List.mem_attachCount,
+    Sigma.ext_iff, and_imp, Sigma.forall, Fin.forall_iff, Fin.cast_mk]
+    grind
+  · simp only [mem_attachCount, mem_coe, List.mem_map, List.mem_attachCount, Sigma.ext_iff,
+      Sigma.exists, exists_and_left, Fin.exists_iff, Fin.cast_mk, exists_and_left,
+      Sigma.forall, Fin.forall_iff, coe_count]
+    grind
+
+theorem card_attachCount : m.attachCount.card = (m.dedup.map (count · m)).sum := by
+  simp only [attachCount, card_sigma, coe_card, List.length_finRange]
+
+@[simp, grind =]
+theorem zero_attachCount : attachCount (0 : Multiset α) = 0 := rfl
+
+theorem complete_attachCount {xc : (x : α) × Fin (m.count x)} : xc ∈ m.attachCount :=
+  mem_attachCount.mpr <| Multiset.count_pos.mp <| Fin.pos xc.2
+
+def equivSigmaCount  : (x : α) × Fin (m.count x) ≃ Fin m.card where
+  toFun xc := ⟨_, _⟩
+  invFun := _
+  left_inv := _
+  right_inv := _
+
+end Multiset
+
+
+variable {β : Type*} [DecidableEq α] [DecidableEq β] {m : Multiset α}
 
 namespace Multiset
 
 /-- Auxiliary definition for the `CoeSort` instance. This prevents the `CoeOut m α`
 instance from inadvertently applying to other sigma types. -/
-def ToType (m : Multiset α) : Type _ := (x : α) × Fin (m.count x)
+structure ToType (m : Multiset α) where
+  val : α
+  count : Fin (m.count val)
 
 /-- Create a type that has the same number of elements as the multiset.
 Terms of this type are triples `⟨x, ⟨i, h⟩⟩` where `x : α`, `i : ℕ`, and `h : i < m.count x`.
 This way repeated elements of a multiset appear multiple times from different values of `i`. -/
-instance : CoeSort (Multiset α) (Type _) := ⟨Multiset.ToType⟩
+instance : CoeSort (Multiset α) (Type u) := ⟨Multiset.ToType⟩
 
 example : DecidableEq m := inferInstanceAs <| DecidableEq ((x : α) × Fin (m.count x))
 

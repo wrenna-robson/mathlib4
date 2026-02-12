@@ -59,25 +59,26 @@ theorem length_product (l₁ : List α) (l₂ : List β) :
 
 variable {σ : α → Type*}
 
-@[simp]
+@[simp, grind =]
 theorem nil_sigma (l : ∀ a, List (σ a)) : (@nil α).sigma l = [] :=
   rfl
 
-@[simp]
+@[simp, grind =]
 theorem sigma_cons (a : α) (l₁ : List α) (l₂ : ∀ a, List (σ a)) :
     (a :: l₁).sigma l₂ = map (Sigma.mk a) (l₂ a) ++ l₁.sigma l₂ :=
   rfl
 
-@[simp]
-theorem sigma_nil : ∀ l : List α, (l.sigma fun a => @nil (σ a)) = []
-  | [] => rfl
-  | _ :: l => by simp [sigma_cons, sigma_nil l]
+@[simp, grind =]
+theorem sigma_nil (l : List α) : (l.sigma fun a => @nil (σ a)) = [] := by
+  induction l <;> grind
 
-@[simp]
-theorem mem_sigma {l₁ : List α} {l₂ : ∀ a, List (σ a)} {a : α} {b : σ a} :
-    Sigma.mk a b ∈ l₁.sigma l₂ ↔ a ∈ l₁ ∧ b ∈ l₂ a := by
-  simp [List.sigma, mem_flatMap, mem_map, exists_and_left, and_left_comm,
-    exists_eq_left, exists_eq_right]
+@[simp, grind =]
+theorem mem_sigma {l₁ : List α} {l₂ : ∀ a, List (σ a)} {ab : (a : α) × σ a} :
+    ab ∈ l₁.sigma l₂ ↔ ab.1 ∈ l₁ ∧ ab.2 ∈ l₂ ab.1 := by grind [List.sigma]
+
+@[simp, grind =]
+theorem length_sigma {σ : α → Type*} (l₁ : List α) (l₂ : ∀ a, List (σ a)) :
+    length (l₁.sigma l₂) = (l₁.map (length <| l₂ ·)).sum := by induction l₁ <;> grind
 
 /-! ### Miscellaneous lemmas -/
 
