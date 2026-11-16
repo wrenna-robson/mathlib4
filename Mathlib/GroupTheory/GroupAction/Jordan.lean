@@ -428,7 +428,7 @@ theorem alternatingGroup_le_of_isPreprimitive_of_isThreeCycle_mem
   suffices IsMultiplyPreprimitive G α (Nat.card α - 2) from
     IsMultiplyPreprimitive.isMultiplyPretransitive ..
   rw [show Nat.card α - 2 = n + 2 by grind]
-  apply hG.isMultiplyPreprimitive (s := (g.supportᶜ : Set α))
+  apply hG.isMultiplyPreprimitive (s := (g.supportFinsetᶜ : Set α))
   · apply Nat.add_left_cancel
     rw [Set.ncard_add_ncard_compl, Set.ncard_coe_finset,
       h3g.card_supportFinset, add_comm, hn]

@@ -75,10 +75,10 @@ theorem card_complex_roots_eq_card_real_add_card_not_gal_inv (p : ℚ[X]) :
     (p.rootSet ℂ).toFinset.card =
       (p.rootSet ℝ).toFinset.card +
         (galActionHom p ℂ (restrict p ℂ
-        (AlgEquiv.restrictScalars ℚ Complex.conjAe))).support.card := by
+        (AlgEquiv.restrictScalars ℚ Complex.conjAe))).supportFinset.card := by
   by_cases hp : p = 0
   · have : IsEmpty (p.rootSet ℂ) := by rw [hp, rootSet_zero]; infer_instance
-    simp_rw [(galActionHom p ℂ _).support.eq_empty_of_isEmpty, hp, rootSet_zero,
+    simp_rw [(galActionHom p ℂ _).supportFinset.eq_empty_of_isEmpty, hp, rootSet_zero,
       Set.toFinset_empty, Finset.card_empty]
   have inj : Function.Injective (IsScalarTower.toAlgHom ℚ ℝ ℂ) := (algebraMap ℝ ℂ).injective
   rw [← Finset.card_image_of_injective _ Subtype.coe_injective, ←
@@ -158,7 +158,7 @@ theorem galActionHom_bijective_of_prime_degree' {p : ℚ[X]} (p_irr : Irreducibl
     (p_roots2 : Fintype.card (p.rootSet ℂ) ≤ Fintype.card (p.rootSet ℝ) + 3) :
     Function.Bijective (galActionHom p ℂ) := by
   apply galActionHom_bijective_of_prime_degree p_irr p_deg
-  let n := (galActionHom p ℂ (restrict p ℂ (Complex.conjAe.restrictScalars ℚ))).support.card
+  let n := (galActionHom p ℂ (restrict p ℂ (Complex.conjAe.restrictScalars ℚ))).supportFinset.card
   have hn : 2 ∣ n :=
     Equiv.Perm.two_dvd_card_supportFinset
       (by

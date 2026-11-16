@@ -174,7 +174,7 @@ theorem isConj_of {σ τ : alternatingGroup α} (hc : IsConj (σ : Perm α) (τ 
   · rw [isConj_iff]
     refine ⟨⟨π, mem_alternatingGroup.mp h⟩, Subtype.val_injective ?_⟩
     simpa only [Subtype.val, Subgroup.coe_mul, coe_inv, coe_mk] using! hπ
-  · have h2 : 2 ≤ σ.supportᶜ.card := by
+  · have h2 : 2 ≤ σ.supportFinsetᶜ.card := by
       rw [Finset.card_compl, le_tsub_iff_left σ.supportFinset.card_le_univ]
       exact hσ
     obtain ⟨a, ha, b, hb, ab⟩ := Finset.one_lt_card.1 h2
@@ -245,7 +245,7 @@ theorem closure_cycleType_eq_two_two_eq_alternatingGroup (h5 : 5 ≤ Nat.card α
     obtain ⟨a, ha⟩ := hg3.isCycle.nonempty_supportFinset
     have h_support := hg3.supportFinset_eq_iff_mem_supportFinset.mpr ha
     have h_nodup := hg3.nodup_iff_mem_supportFinset.mpr ha
-    have : 1 < g.supportᶜ.card := by grind [Finset.card_compl, Nat.card_eq_fintype_card]
+    have : 1 < g.supportFinsetᶜ.card := by grind [Finset.card_compl, Nat.card_eq_fintype_card]
     obtain ⟨b, c, hb, hc, hbc⟩ := Finset.one_lt_card_iff.mp this
     have H : g = (swap a (g a) * (swap b c)) * (swap b c * (swap (g a) (g (g a)))) := by
       simp [mul_assoc, ← hg3.eq_swap_mul_swap_iff_mem_supportFinset.mpr ha]
