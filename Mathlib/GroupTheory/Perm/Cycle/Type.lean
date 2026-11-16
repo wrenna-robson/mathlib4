@@ -361,7 +361,7 @@ theorem sign_of_pow_two_eq_one {σ : Perm α} (hσ : σ ^ 2 = 1) :
 end CycleType
 
 theorem card_compl_supportFinset_modEq [DecidableEq α] {p n : ℕ} [hp : Fact p.Prime] {σ : Perm α}
-    (hσ : σ ^ p ^ n = 1) : σ.supportᶜ.card ≡ Fintype.card α [MOD p] := by
+    (hσ : σ ^ p ^ n = 1) : σ.supportFinsetᶜ.card ≡ Fintype.card α [MOD p] := by
   rw [Nat.modEq_iff_dvd', ← Finset.card_compl, compl_compl, ← sum_cycleType]
   · refine Multiset.dvd_sum fun k hk => ?_
     obtain ⟨m, -, hm⟩ := (Nat.dvd_prime_pow hp.out).mp (orderOf_dvd_of_pow_eq_one hσ)
@@ -402,7 +402,7 @@ theorem exists_fixed_point_of_prime {p n : ℕ} [hp : Fact p.Prime] (hα : ¬p �
 theorem exists_fixed_point_of_prime' {p n : ℕ} [hp : Fact p.Prime] (hα : p ∣ Fintype.card α)
     {σ : Perm α} (hσ : σ ^ p ^ n = 1) {a : α} (ha : σ a = a) : ∃ b : α, σ b = b ∧ b ≠ a := by
   classical
-    have h : ∀ b : α, b ∈ σ.supportᶜ ↔ σ b = b := fun b => by
+    have h : ∀ b : α, b ∈ σ.supportFinsetᶜ ↔ σ b = b := fun b => by
       rw [Finset.mem_compl, mem_supportFinset, Classical.not_not]
     obtain ⟨b, hb1, hb2⟩ := Finset.exists_mem_ne (hp.out.one_lt.trans_le
       (Nat.le_of_dvd (Finset.card_pos.mpr ⟨a, (h a).mpr ha⟩) (Nat.modEq_zero_iff_dvd.mp
