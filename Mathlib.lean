@@ -5083,6 +5083,7 @@ public import Mathlib.GroupTheory.Perm.Option
 public import Mathlib.GroupTheory.Perm.Sign
 public import Mathlib.GroupTheory.Perm.Subgroup
 public import Mathlib.GroupTheory.Perm.Support
+public import Mathlib.GroupTheory.Perm.Support.Basic
 public import Mathlib.GroupTheory.Perm.Support.Finset
 public import Mathlib.GroupTheory.Perm.ViaEmbedding
 public import Mathlib.GroupTheory.Presentation
