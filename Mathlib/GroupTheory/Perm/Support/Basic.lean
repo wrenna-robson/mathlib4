@@ -28,7 +28,7 @@ See `Mathlib/GroupTheory/Perm/Support/Finset.lean` for `Equiv.Perm.supportFinset
 of points moved by a permutation of a `Fintype`.
 -/
 
-@[expose] public section
+public section
 
 open Equiv Finset Function
 
@@ -40,7 +40,7 @@ section Disjoint
 
 /-- Two permutations `f` and `g` are `Disjoint` if their supports are disjoint, i.e.,
 every element is fixed either by `f`, or by `g`. -/
-def Disjoint (f g : Perm α) :=
+@[expose] def Disjoint (f g : Perm α) :=
   ∀ x, f x = x ∨ g x = x
 
 variable {f g h : Perm α}
@@ -186,7 +186,7 @@ section IsSwap
 variable [DecidableEq α]
 
 /-- `f.IsSwap` indicates that the permutation `f` is a transposition of two elements. -/
-def IsSwap (f : Perm α) : Prop :=
+@[expose] def IsSwap (f : Perm α) : Prop :=
   ∃ x y, x ≠ y ∧ f = swap x y
 
 @[simp]
