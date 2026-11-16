@@ -311,7 +311,6 @@
  ["defsWithUnderscore", "CochainComplex.HomComplex.δ_hom"],
  ["defsWithUnderscore", "DividedPowers.DPMorphism.coe_ringHom"],
  ["defsWithUnderscore", "Equiv.Perm.iwasawaStructure_two"],
- ["defsWithUnderscore", "Equiv.Perm.subtypePerm_of_supportFinset_le"],
  ["defsWithUnderscore", "Equiv.Perm.subtypePerm_of_support_le"],
  ["defsWithUnderscore",
   "FirstOrder.Language.inhabited_FGEquiv_of_IsEmpty_Constants_and_Relations"],

@@ -1006,12 +1006,12 @@ def subtypePermOfSupportFinset (c : Perm α) : Perm c.supportFinset :=
 @[deprecated (since := "2026-11-16")] alias subtypePermOfSupport := subtypePermOfSupportFinset
 
 /-- Restrict a permutation to a Finset containing its support -/
-def subtypePerm_of_supportFinset_le (c : Perm α) {s : Finset α}
+def subtypePermOfSupportFinsetLE (c : Perm α) {s : Finset α}
     (hcs : c.supportFinset ⊆ s) : Equiv.Perm s :=
   subtypePerm c (isInvariant_of_supportFinset_le hcs)
 
 @[deprecated (since := "2026-11-16")] alias subtypePerm_of_support_le :=
-    subtypePerm_of_supportFinset_le
+    subtypePermOfSupportFinsetLE
 
 /-- Support of a cycle is nonempty -/
 theorem IsCycle.nonempty_supportFinset {g : Perm α} (hg : g.IsCycle) :
