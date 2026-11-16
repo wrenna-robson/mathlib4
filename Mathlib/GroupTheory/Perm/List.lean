@@ -219,7 +219,7 @@ theorem support_formPerm_of_nodup' (l : List α) (h : Nodup l) (h' : ∀ x : α,
 theorem supportFinset_formPerm_of_nodup [Fintype α] (l : List α) (h : Nodup l)
     (h' : ∀ x : α, l ≠ [x]) :
     supportFinset (formPerm l) = l.toFinset := by
-  rw [← Finset.coe_inj, coe_supportFinset_eq_support, support_formPerm_of_nodup' _ h h']
+  rw [← Finset.coe_inj, coe_supportFinset_eq_set_support, support_formPerm_of_nodup' _ h h']
 
 @[deprecated (since := "2026-11-16")] alias support_formPerm_of_nodup :=
     supportFinset_formPerm_of_nodup

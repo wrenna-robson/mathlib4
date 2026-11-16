@@ -54,13 +54,13 @@ theorem notMem_supportFinset {x : α} : x ∉ f.supportFinset ↔ f x = x := by 
 
 @[deprecated (since := "2026-11-16")] alias notMem_support := notMem_supportFinset
 
-theorem coe_supportFinset_eq_support (f : Perm α) :
+theorem coe_supportFinset_eq_set_support (f : Perm α) :
     (f.supportFinset : Set α) = { x | f x ≠ x } := by
   ext
   simp
 
 @[deprecated (since := "2026-11-16")] alias coe_support_eq_set_support :=
-    coe_supportFinset_eq_support
+    coe_supportFinset_eq_set_support
 
 @[simp]
 theorem supportFinset_eq_empty_iff {σ : Perm α} : σ.supportFinset = ∅ ↔ σ = 1 := by
