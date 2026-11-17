@@ -8,8 +8,6 @@ module
 public import Mathlib.Algebra.Group.End
 public import Mathlib.Data.Finset.NoncommProd
 
-import Mathlib.Algebra.Group.Commute.Basic
-
 /-!
 # Support of a permutation: basic definitions
 
@@ -22,7 +20,6 @@ In the following, `f g : Equiv.Perm α`.
 
 * `Equiv.Perm.Disjoint`: two permutations `f` and `g` are `Disjoint` if every element is fixed
   either by `f`, or by `g`.
-* `Equiv.Perm.IsSwap`: `f = swap x y` for `x ≠ y`.
 
 See `Mathlib/GroupTheory/Perm/Support/Finset.lean` for `Equiv.Perm.supportFinset`, the `Finset`
 of points moved by a permutation of a `Fintype`.
@@ -35,46 +32,6 @@ open Equiv Finset Function
 namespace Equiv.Perm
 
 variable {α : Type*}
-
-section PowApply
-
-variable {f : Perm α}
-
-theorem pow_apply_eq_self_of_apply_eq_self {x : α} (hfx : f x = x) : ∀ n : ℕ, (f ^ n) x = x
-  | 0 => rfl
-  | n + 1 => by rw [pow_succ, mul_apply, hfx, pow_apply_eq_self_of_apply_eq_self hfx n]
-
-theorem zpow_apply_eq_self_of_apply_eq_self {x : α} (hfx : f x = x) : ∀ n : ℤ, (f ^ n) x = x
-  | (n : ℕ) => pow_apply_eq_self_of_apply_eq_self hfx n
-  | Int.negSucc n => by rw [zpow_negSucc, inv_eq_iff_eq, pow_apply_eq_self_of_apply_eq_self hfx]
-
-theorem pow_apply_eq_of_apply_apply_eq_self {x : α} (hffx : f (f x) = x) :
-    ∀ n : ℕ, (f ^ n) x = x ∨ (f ^ n) x = f x
-  | 0 => Or.inl rfl
-  | n + 1 =>
-    (pow_apply_eq_of_apply_apply_eq_self hffx n).elim
-      (fun h => Or.inr (by rw [pow_succ', mul_apply, h]))
-      fun h => Or.inl (by rw [pow_succ', mul_apply, h, hffx])
-
-theorem zpow_apply_eq_of_apply_apply_eq_self {x : α} (hffx : f (f x) = x) :
-    ∀ i : ℤ, (f ^ i) x = x ∨ (f ^ i) x = f x
-  | (n : ℕ) => pow_apply_eq_of_apply_apply_eq_self hffx n
-  | Int.negSucc n => by
-    rw [zpow_negSucc, inv_eq_iff_eq, ← f.injective.eq_iff, ← mul_apply, ← pow_succ', eq_comm,
-      inv_eq_iff_eq, ← mul_apply, ← pow_succ, @eq_comm _ x, or_comm]
-    exact pow_apply_eq_of_apply_apply_eq_self hffx _
-
-@[simp]
-theorem apply_pow_apply_eq_iff (f : Perm α) (n : ℕ) {x : α} :
-    f ((f ^ n) x) = (f ^ n) x ↔ f x = x := by
-  rw [← mul_apply, Commute.self_pow f, mul_apply, apply_eq_iff_eq]
-
-@[simp]
-theorem apply_zpow_apply_eq_iff (f : Perm α) (n : ℤ) {x : α} :
-    f ((f ^ n) x) = (f ^ n) x ↔ f x = x := by
-  rw [← mul_apply, Commute.self_zpow f, mul_apply, apply_eq_iff_eq]
-
-end PowApply
 
 section Support
 
@@ -218,33 +175,5 @@ theorem Disjoint.pow_disjoint_pow {σ τ : Perm α} (hστ : Disjoint σ τ) (m 
   hστ.zpow_disjoint_zpow m n
 
 end Disjoint
-
-section IsSwap
-
-variable [DecidableEq α]
-
-/-- `f.IsSwap` indicates that the permutation `f` is a transposition of two elements. -/
-@[expose] def IsSwap (f : Perm α) : Prop :=
-  ∃ x y, x ≠ y ∧ f = swap x y
-
-@[simp]
-theorem ofSubtype_swap_eq {p : α → Prop} [DecidablePred p] (x y : Subtype p) :
-    ofSubtype (Equiv.swap x y) = Equiv.swap ↑x ↑y := by
-  grind [ofSubtype_apply_of_mem, ofSubtype_apply_of_not_mem]
-
-theorem IsSwap.of_subtype_isSwap {p : α → Prop} [DecidablePred p] {f : Perm (Subtype p)}
-    (h : f.IsSwap) : (ofSubtype f).IsSwap :=
-  let ⟨⟨x, hx⟩, ⟨y, hy⟩, hxy⟩ := h
-  ⟨x, y, by
-    simp only [Ne, Subtype.ext_iff] at hxy
-    exact hxy.1, by
-    rw [hxy.2, ofSubtype_swap_eq]⟩
-
-theorem ne_and_ne_of_swap_mul_apply_ne_self {f : Perm α} {x y : α} (hy : (swap x (f x) * f) y ≠ y) :
-    f y ≠ y ∧ y ≠ x := by
-  simp only [swap_apply_def, mul_apply, f.injective.eq_iff] at *
-  grind
-
-end IsSwap
 
 end Equiv.Perm
