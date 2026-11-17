@@ -7,6 +7,8 @@ module
 
 public import Mathlib.Algebra.Group.End
 
+import Mathlib.Data.Set.Insert
+
 /-!
 # Support of a permutation: basic definitions
 
