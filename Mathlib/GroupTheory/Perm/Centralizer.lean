@@ -314,9 +314,9 @@ theorem ofPermHomFun_apply_mem_supportFinset_cycle_iff {x : α} {c : g.cycleFact
     rw [zpow_apply_mem_supportFinset_of_mem_cycleFactorsFinset_iff]
     by_cases h : c = d
     · simp only [h, hd, mem_supportFinset_self]
-    · have H : Disjoint c.val d.val :=
+    · have H : Perm.Disjoint c.val d.val :=
         cycleFactorsFinset_pairwise_disjoint g c.prop d.prop (Subtype.coe_ne_coe.mpr h)
-      have H' : Disjoint ((τ : Perm g.cycleFactorsFinset) c : Perm α)
+      have H' : Perm.Disjoint ((τ : Perm g.cycleFactorsFinset) c : Perm α)
         ((τ : Perm g.cycleFactorsFinset) d : Perm α) :=
         cycleFactorsFinset_pairwise_disjoint g ((τ : Perm g.cycleFactorsFinset) c).prop
           ((τ : Perm g.cycleFactorsFinset) d).prop (by
@@ -524,7 +524,7 @@ theorem kerParam_apply {u : Perm (Function.fixedPoints g)}
     have key := cycleFactorsFinset_pairwise_disjoint g a.2 hx ha1
     rw [disjoint_iff_disjoint_supportFinset, Finset.disjoint_left] at key
     obtain ⟨k, hk⟩ := mem_zpowers_iff.mp (v a).2
-    replace ha2 := key (supportFinset_zpow_le a.1 k (hk ▸ ha2))
+    replace ha2 := key (supportFinset_zpow_subset a.1 k (hk ▸ ha2))
     obtain ⟨k, hk⟩ := mem_zpowers_iff.mp (v ⟨g.cycleOf x, hx⟩).2
     rwa [← hk, zpow_apply_mem_supportFinset, notMem_supportFinset, cycleOf_apply_self] at ha2
   · rw [cycleOf_mem_cycleFactorsFinset_iff] at hx
