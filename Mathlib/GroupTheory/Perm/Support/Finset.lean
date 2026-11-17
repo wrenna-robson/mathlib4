@@ -98,7 +98,7 @@ theorem mem_supportFinset_iff_of_commute {g c : Perm α} (hgc : Commute g c) (x 
 theorem supportFinset_mul_le (f g : Perm α) :
     (f * g).supportFinset ≤ f.supportFinset ∪ g.supportFinset := fun x => by
   rw [mem_union, mem_supportFinset, mem_supportFinset, mem_supportFinset, mul_apply, ← not_and_or,
-      not_imp_not]
+    not_imp_not]
   rintro ⟨hf, hg⟩
   rw [hg, hf]
 
@@ -127,7 +127,7 @@ theorem supportFinset_pow_le (σ : Perm α) (n : ℕ) :
 @[simp]
 theorem supportFinset_inv (σ : Perm α) : supportFinset σ⁻¹ = σ.supportFinset := by
   simp_rw [Finset.ext_iff, mem_supportFinset, not_iff_not, inv_eq_iff_eq.trans eq_comm,
-      imp_true_iff]
+    imp_true_iff]
 
 @[deprecated (since := "2026-11-16")] alias support_inv := supportFinset_inv
 
@@ -175,8 +175,7 @@ theorem supportFinset_ofSubtype {p : α → Prop} [DecidablePred p] (u : Perm (S
     (ofSubtype u).supportFinset = u.supportFinset.map (Function.Embedding.subtype p) := by
   ext x
   simp only [mem_supportFinset, ne_eq, Finset.mem_map, Function.Embedding.coe_subtype,
-      Subtype.exists,
-    exists_and_right, exists_eq_right, not_iff_comm, not_exists, not_not]
+    Subtype.exists, exists_and_right, exists_eq_right, not_iff_comm, not_exists, not_not]
   by_cases hx : p x
   · simp only [forall_prop_of_true hx, ofSubtype_apply_of_mem u hx, ← Subtype.coe_inj]
   · simp only [forall_prop_of_false hx, ofSubtype_apply_of_not_mem u hx]
@@ -253,7 +252,7 @@ theorem Disjoint.supportFinset_mul (h : Disjoint f g) :
     (f * g).supportFinset = f.supportFinset ∪ g.supportFinset := by
   refine le_antisymm (supportFinset_mul_le _ _) fun a => ?_
   rw [mem_union, mem_supportFinset, mem_supportFinset, mem_supportFinset, mul_apply, ← not_and_or,
-      not_imp_not]
+    not_imp_not]
   exact
     (h a).elim (fun hf h => ⟨hf, f.apply_eq_iff_eq.mp (h.trans hf.symm)⟩) fun hg h =>
       ⟨congr(f $hg).symm.trans h, hg⟩
@@ -342,8 +341,7 @@ theorem supportFinset_swap_mul_ge_supportFinset_sdiff (f : Perm α) (x y : α) :
     f.supportFinset \ {x, y} ≤ (swap x y * f).supportFinset := by
   intro
   simp only [and_imp, Perm.coe_mul, Function.comp_apply, Ne, mem_supportFinset, mem_insert,
-      mem_sdiff,
-    mem_singleton]
+    mem_sdiff, mem_singleton]
   push Not
   rintro ha ⟨hx, hy⟩ H
   rw [swap_apply_eq_iff, swap_apply_of_ne_of_ne hx hy] at H
@@ -474,8 +472,7 @@ theorem card_supportFinset_ne_one (f : Perm α) : #f.supportFinset ≠ 1 := by
 @[simp]
 theorem card_supportFinset_le_one {f : Perm α} : #f.supportFinset ≤ 1 ↔ f = 1 := by
   rw [le_iff_lt_or_eq, Nat.lt_succ_iff, Nat.le_zero, card_supportFinset_eq_zero,
-      or_iff_not_imp_right,
-    imp_iff_right f.card_supportFinset_ne_one]
+    or_iff_not_imp_right, imp_iff_right f.card_supportFinset_ne_one]
 
 @[deprecated (since := "2026-11-16")] alias card_support_le_one := card_supportFinset_le_one
 
@@ -507,8 +504,8 @@ theorem card_supportFinset_eq_two {f : Perm α} : #f.supportFinset = 2 ↔ IsSwa
     rw [mem_singleton] at hmem
     refine ⟨x, y, hmem, ?_⟩
     ext a
-    have key : ∀ b, f b ≠ b ↔ _ := fun b =>
-        by rw [← mem_supportFinset, ← hins, mem_insert, mem_singleton]
+    have key : ∀ b, f b ≠ b ↔ _ := fun b => by
+      rw [← mem_supportFinset, ← hins, mem_insert, mem_singleton]
     by_cases ha : f a = a
     · have ha' := not_or.mp (mt (key a).mpr (not_not.mpr ha))
       rw [ha, swap_apply_of_ne_of_ne ha'.1 ha'.2]

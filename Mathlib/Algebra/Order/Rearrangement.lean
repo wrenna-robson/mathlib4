@@ -7,7 +7,7 @@ module
 
 public import Mathlib.Algebra.Order.Module.Defs
 public import Mathlib.Algebra.Order.Module.Synonym
-public import Mathlib.GroupTheory.Perm.Support
+public import Mathlib.GroupTheory.Perm.Support.Basic
 public import Mathlib.Order.Monotone.Monovary
 
 import Mathlib.Algebra.Order.Monoid.OrderDual

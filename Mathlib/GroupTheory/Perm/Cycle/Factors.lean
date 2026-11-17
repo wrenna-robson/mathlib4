@@ -474,7 +474,7 @@ theorem mem_list_cycles_iff {α : Type*} [Finite α] {l : List (Perm α)}
       have key : ∀ x ∈ σ.supportFinset ∩ τ.supportFinset, σ x = τ x := by
         intro x hx
         rw [h x (mem_supportFinset.mp (mem_of_mem_inter_left hx)),
-            hτl x (mem_of_mem_inter_right hx)]
+          hτl x (mem_of_mem_inter_right hx)]
       convert hτ
       refine h3.eq_on_supportFinset_inter_nonempty_congr (h1 _ hτ) key ?_ ha
       exact key a (mem_inter_of_mem ha hτa)

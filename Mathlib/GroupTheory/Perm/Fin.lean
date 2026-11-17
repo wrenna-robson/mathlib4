@@ -111,8 +111,8 @@ theorem supportFinset_finRotate {n : ℕ} : supportFinset (finRotate (n + 2)) = 
 
 @[deprecated (since := "2026-11-16")] alias support_finRotate := supportFinset_finRotate
 
-theorem supportFinset_finRotate_of_le {n : ℕ} (h : 2 ≤ n) : supportFinset
-    (finRotate n) = Finset.univ := by
+theorem supportFinset_finRotate_of_le {n : ℕ} (h : 2 ≤ n) :
+    supportFinset (finRotate n) = Finset.univ := by
   obtain ⟨m, rfl⟩ := exists_add_of_le h
   rw [add_comm, supportFinset_finRotate]
 

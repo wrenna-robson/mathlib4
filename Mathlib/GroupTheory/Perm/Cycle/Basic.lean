@@ -520,7 +520,7 @@ theorem IsCycle.eq_on_supportFinset_inter_nonempty_congr (hf : IsCycle f) (hg : 
     intro y hy
     obtain ⟨k, rfl⟩ := hf.exists_pow_eq (mem_supportFinset.mp hx') (mem_supportFinset.mp hy)
     rwa [pow_eq_on_of_mem_supportFinset h _ _ (mem_inter_of_mem hx' hx''),
-        pow_apply_mem_supportFinset]
+      pow_apply_mem_supportFinset]
   rw [inter_eq_left.mpr this] at h
   exact hf.supportFinset_congr hg this h
 
@@ -660,8 +660,8 @@ theorem IsCycle.isConj (hσ : IsCycle σ) (hτ : IsCycle τ) (h : #σ.supportFin
   refine
     isConj_of_supportFinset_equiv
       (hσ.zpowersEquivSupportFinset.symm.trans <|
-        (zpowersEquivZPowers <|
-            by rw [hσ.orderOf, h, hτ.orderOf]).trans hτ.zpowersEquivSupportFinset)
+        (zpowersEquivZPowers <| by rw [hσ.orderOf, h, hτ.orderOf]).trans
+          hτ.zpowersEquivSupportFinset)
       ?_
   intro x hx
   simp only [Equiv.trans_apply]

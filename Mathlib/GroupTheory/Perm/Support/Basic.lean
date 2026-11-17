@@ -36,6 +36,68 @@ namespace Equiv.Perm
 
 variable {α : Type*}
 
+section PowApply
+
+variable {f : Perm α}
+
+theorem pow_apply_eq_self_of_apply_eq_self {x : α} (hfx : f x = x) : ∀ n : ℕ, (f ^ n) x = x
+  | 0 => rfl
+  | n + 1 => by rw [pow_succ, mul_apply, hfx, pow_apply_eq_self_of_apply_eq_self hfx n]
+
+theorem zpow_apply_eq_self_of_apply_eq_self {x : α} (hfx : f x = x) : ∀ n : ℤ, (f ^ n) x = x
+  | (n : ℕ) => pow_apply_eq_self_of_apply_eq_self hfx n
+  | Int.negSucc n => by rw [zpow_negSucc, inv_eq_iff_eq, pow_apply_eq_self_of_apply_eq_self hfx]
+
+theorem pow_apply_eq_of_apply_apply_eq_self {x : α} (hffx : f (f x) = x) :
+    ∀ n : ℕ, (f ^ n) x = x ∨ (f ^ n) x = f x
+  | 0 => Or.inl rfl
+  | n + 1 =>
+    (pow_apply_eq_of_apply_apply_eq_self hffx n).elim
+      (fun h => Or.inr (by rw [pow_succ', mul_apply, h]))
+      fun h => Or.inl (by rw [pow_succ', mul_apply, h, hffx])
+
+theorem zpow_apply_eq_of_apply_apply_eq_self {x : α} (hffx : f (f x) = x) :
+    ∀ i : ℤ, (f ^ i) x = x ∨ (f ^ i) x = f x
+  | (n : ℕ) => pow_apply_eq_of_apply_apply_eq_self hffx n
+  | Int.negSucc n => by
+    rw [zpow_negSucc, inv_eq_iff_eq, ← f.injective.eq_iff, ← mul_apply, ← pow_succ', eq_comm,
+      inv_eq_iff_eq, ← mul_apply, ← pow_succ, @eq_comm _ x, or_comm]
+    exact pow_apply_eq_of_apply_apply_eq_self hffx _
+
+@[simp]
+theorem apply_pow_apply_eq_iff (f : Perm α) (n : ℕ) {x : α} :
+    f ((f ^ n) x) = (f ^ n) x ↔ f x = x := by
+  rw [← mul_apply, Commute.self_pow f, mul_apply, apply_eq_iff_eq]
+
+@[simp]
+theorem apply_zpow_apply_eq_iff (f : Perm α) (n : ℤ) {x : α} :
+    f ((f ^ n) x) = (f ^ n) x ↔ f x = x := by
+  rw [← mul_apply, Commute.self_zpow f, mul_apply, apply_eq_iff_eq]
+
+end PowApply
+
+section Support
+
+variable (p q : Perm α)
+
+lemma set_support_symm_eq : {x | p.symm x ≠ x} = {x | p x ≠ x} := by
+  ext; simp [eq_symm_apply, eq_comm]
+
+theorem set_support_apply_mem {p : Perm α} {a : α} :
+    p a ∈ { x | p x ≠ x } ↔ a ∈ { x | p x ≠ x } := by simp
+
+theorem set_support_zpow_subset (n : ℤ) : { x | (p ^ n) x ≠ x } ⊆ { x | p x ≠ x } := by
+  intro x
+  simp only [Set.mem_ofPred_eq, Ne]
+  intro hx H
+  simp [zpow_apply_eq_self_of_apply_eq_self H] at hx
+
+theorem set_support_mul_subset : { x | (p * q) x ≠ x } ⊆ { x | p x ≠ x } ∪ { x | q x ≠ x } := by
+  simp only [coe_mul]
+  grind
+
+end Support
+
 section Disjoint
 
 /-- Two permutations `f` and `g` are `Disjoint` if their supports are disjoint, i.e.,
@@ -135,30 +197,6 @@ theorem nodup_of_pairwise_disjoint {l : List (Perm α)} (h1 : (1 : Perm α) ∉ 
     (h2 : l.Pairwise Disjoint) : l.Nodup := by
   grind [List.Pairwise.imp_of_mem, disjoint_refl_iff]
 
-theorem pow_apply_eq_self_of_apply_eq_self {x : α} (hfx : f x = x) : ∀ n : ℕ, (f ^ n) x = x
-  | 0 => rfl
-  | n + 1 => by rw [pow_succ, mul_apply, hfx, pow_apply_eq_self_of_apply_eq_self hfx n]
-
-theorem zpow_apply_eq_self_of_apply_eq_self {x : α} (hfx : f x = x) : ∀ n : ℤ, (f ^ n) x = x
-  | (n : ℕ) => pow_apply_eq_self_of_apply_eq_self hfx n
-  | Int.negSucc n => by rw [zpow_negSucc, inv_eq_iff_eq, pow_apply_eq_self_of_apply_eq_self hfx]
-
-theorem pow_apply_eq_of_apply_apply_eq_self {x : α} (hffx : f (f x) = x) :
-    ∀ n : ℕ, (f ^ n) x = x ∨ (f ^ n) x = f x
-  | 0 => Or.inl rfl
-  | n + 1 =>
-    (pow_apply_eq_of_apply_apply_eq_self hffx n).elim
-      (fun h => Or.inr (by rw [pow_succ', mul_apply, h]))
-      fun h => Or.inl (by rw [pow_succ', mul_apply, h, hffx])
-
-theorem zpow_apply_eq_of_apply_apply_eq_self {x : α} (hffx : f (f x) = x) :
-    ∀ i : ℤ, (f ^ i) x = x ∨ (f ^ i) x = f x
-  | (n : ℕ) => pow_apply_eq_of_apply_apply_eq_self hffx n
-  | Int.negSucc n => by
-    rw [zpow_negSucc, inv_eq_iff_eq, ← f.injective.eq_iff, ← mul_apply, ← pow_succ', eq_comm,
-      inv_eq_iff_eq, ← mul_apply, ← pow_succ, @eq_comm _ x, or_comm]
-    exact pow_apply_eq_of_apply_apply_eq_self hffx _
-
 theorem Disjoint.mul_apply_eq_iff {σ τ : Perm α} (hστ : Disjoint σ τ) {a : α} :
     (σ * τ) a = a ↔ σ a = a ∧ τ a = a := by
   refine ⟨fun h => ?_, fun h => by rw [mul_apply, h.2, h.1]⟩
@@ -208,41 +246,5 @@ theorem ne_and_ne_of_swap_mul_apply_ne_self {f : Perm α} {x y : α} (hy : (swap
   grind
 
 end IsSwap
-
-section support
-
-section Set
-
-variable (p q : Perm α)
-
-lemma set_support_symm_eq : {x | p.symm x ≠ x} = {x | p x ≠ x} := by
-  ext; simp [eq_symm_apply, eq_comm]
-
-theorem set_support_apply_mem {p : Perm α} {a : α} :
-    p a ∈ { x | p x ≠ x } ↔ a ∈ { x | p x ≠ x } := by simp
-
-theorem set_support_zpow_subset (n : ℤ) : { x | (p ^ n) x ≠ x } ⊆ { x | p x ≠ x } := by
-  intro x
-  simp only [Set.mem_ofPred_eq, Ne]
-  intro hx H
-  simp [zpow_apply_eq_self_of_apply_eq_self H] at hx
-
-theorem set_support_mul_subset : { x | (p * q) x ≠ x } ⊆ { x | p x ≠ x } ∪ { x | q x ≠ x } := by
-  simp only [coe_mul]
-  grind
-
-end Set
-
-@[simp]
-theorem apply_pow_apply_eq_iff (f : Perm α) (n : ℕ) {x : α} :
-    f ((f ^ n) x) = (f ^ n) x ↔ f x = x := by
-  rw [← mul_apply, Commute.self_pow f, mul_apply, apply_eq_iff_eq]
-
-@[simp]
-theorem apply_zpow_apply_eq_iff (f : Perm α) (n : ℤ) {x : α} :
-    f ((f ^ n) x) = (f ^ n) x ↔ f x = x := by
-  rw [← mul_apply, Commute.self_zpow f, mul_apply, apply_eq_iff_eq]
-
-end support
 
 end Equiv.Perm

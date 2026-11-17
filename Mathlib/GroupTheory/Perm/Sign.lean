@@ -14,7 +14,7 @@ public import Mathlib.Data.Fintype.Perm
 public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fintype.Sum
 public import Mathlib.Data.Int.Order.Units
-public import Mathlib.GroupTheory.Perm.Support
+public import Mathlib.GroupTheory.Perm.Support.Basic
 public import Mathlib.Logic.Equiv.Fintype
 public import Mathlib.Tactic.NormNum.Ineq
 

@@ -241,7 +241,7 @@ theorem injective : Function.Injective a := by
   use a c
   conv_rhs => rw [h]
   simp only [← Perm.mem_supportFinset, a.mem_supportFinset_self c, a.mem_supportFinset_self d,
-      and_self]
+    and_self]
 
 theorem cycleOf_eq : g.cycleOf (a c) = c :=
   (cycle_is_cycleOf (a.mem_supportFinset_self c) c.prop).symm
@@ -514,7 +514,7 @@ theorem kerParam_apply {u : Perm (Function.fixedPoints g)}
   split_ifs with hx
   · have hx' := hx
     rw [cycleOf_mem_cycleFactorsFinset_iff, mem_supportFinset, Ne,
-        ← Function.mem_fixedPoints_iff] at hx'
+      ← Function.mem_fixedPoints_iff] at hx'
     rw [kerParam, MonoidHom.noncommCoprod_apply', mul_apply, ofSubtype_apply_of_not_mem u hx',
       noncommPiCoprod_apply, ← Finset.noncommProd_erase_mul _ (Finset.mem_univ ⟨g.cycleOf x, hx⟩),
       mul_apply, ← notMem_supportFinset]
