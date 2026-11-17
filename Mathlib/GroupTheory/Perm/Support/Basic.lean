@@ -72,6 +72,14 @@ theorem pow_apply_mem_support {n : ℕ} {x : α} : (f ^ n) x ∈ f.support ↔ x
 
 theorem zpow_apply_mem_support {n : ℤ} {x : α} : (f ^ n) x ∈ f.support ↔ x ∈ f.support := by simp
 
+theorem support_eq_pair_iff {x y} : f.support = {x, y} ↔ x ≠ y ∧ f x = y ∧ f y = x ∧
+    (∀ {z}, z ≠ x → z ≠ y → f z = z) := Set.ext_iff.trans <|
+    ⟨(by have := · ∘' f; grind [f.injective]), by grind⟩
+
+theorem support_ne_singleton {x} : f.support ≠ {x} := Set.pair_eq_singleton x ▸ by
+  simp only [ne_eq, support_eq_pair_iff, and_self_left,
+    false_and, not_true_eq_false, not_false_eq_true]
+
 /-- If `g` and `c` commute, then `g` stabilizes the support of `c`. -/
 theorem mem_support_iff_of_commute {g c : Perm α} (hgc : Commute g c) (x : α) :
     g x ∈ c.support ↔ x ∈ c.support := by
@@ -80,15 +88,18 @@ theorem mem_support_iff_of_commute {g c : Perm α} (hgc : Commute g c) (x : α) 
 theorem support_congr (h : f.support ⊆ g.support) (h' : ∀ x ∈ g.support, f x = g x) : f = g := by
   grind
 
+theorem support_swap_eq_pair_iff [DecidableEq α] {x y : α} :
+    (swap x y).support = {x, y} ↔ x ≠ y := support_eq_pair_iff.trans <| and_iff_left_of_imp <|
+  fun _ => ⟨swap_apply_left x y, swap_apply_right x y, swap_apply_of_ne_of_ne⟩
+
 @[simp]
-theorem support_swap_of_ne [DecidableEq α] {x y : α} (h : x ≠ y) : (swap x y).support = {x, y} := by
-  grind
+theorem support_swap_of_ne [DecidableEq α] {x y : α} (h : x ≠ y) : (swap x y).support = {x, y} :=
+  support_swap_eq_pair_iff.mpr h
 
 theorem support_swap [DecidableEq α] {x y : α} : (swap x y).support =
-    if x = y then ∅ else {x, y} := by grind
-
-theorem support_swap_eq_pair_iff [DecidableEq α] (x y : α) :
-    (swap x y).support = {x, y} ↔ x ≠ y := by grind
+    if x = y then ∅ else {x, y} := if h : x = y then
+    Eq.trans (h ▸ swap_self x ▸ support_refl) ((ite_eq_left h).symm) else
+    Eq.trans (support_swap_of_ne h) (ite_eq_right h).symm
 
 theorem support_pow_subset (n : ℕ) : (f ^ n).support ⊆ f.support := by
   grind [pow_apply_eq_self_of_apply_eq_self]
