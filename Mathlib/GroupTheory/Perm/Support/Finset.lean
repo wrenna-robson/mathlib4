@@ -95,14 +95,14 @@ theorem mem_supportFinset_iff_of_commute {g c : Perm α} (hgc : Commute g c) (x 
 @[deprecated (since := "2026-11-16")] alias mem_support_iff_of_commute :=
     mem_supportFinset_iff_of_commute
 
-theorem supportFinset_mul_le (f g : Perm α) :
-    (f * g).supportFinset ≤ f.supportFinset ∪ g.supportFinset := fun x => by
+theorem supportFinset_mul_subset (f g : Perm α) :
+    (f * g).supportFinset ⊆ f.supportFinset ∪ g.supportFinset := fun x => by
   rw [mem_union, mem_supportFinset, mem_supportFinset, mem_supportFinset, mul_apply, ← not_and_or,
     not_imp_not]
   rintro ⟨hf, hg⟩
   rw [hg, hf]
 
-@[deprecated (since := "2026-11-16")] alias support_mul_le := supportFinset_mul_le
+@[deprecated (since := "2026-11-16")] alias support_mul_le := supportFinset_mul_subset
 
 theorem exists_mem_supportFinset_of_mem_supportFinset_prod {l : List (Perm α)} {x : α}
     (hx : x ∈ l.prod.supportFinset) : ∃ f : Perm α, f ∈ l ∧ x ∈ f.supportFinset := by
@@ -118,11 +118,11 @@ theorem exists_mem_supportFinset_of_mem_supportFinset_prod {l : List (Perm α)} 
 @[deprecated (since := "2026-11-16")] alias exists_mem_support_of_mem_support_prod :=
     exists_mem_supportFinset_of_mem_supportFinset_prod
 
-theorem supportFinset_pow_le (σ : Perm α) (n : ℕ) :
-    (σ ^ n).supportFinset ≤ σ.supportFinset := fun _ h1 =>
+theorem supportFinset_pow_subset (σ : Perm α) (n : ℕ) :
+    (σ ^ n).supportFinset ⊆ σ.supportFinset := fun _ h1 =>
   mem_supportFinset.mpr fun h2 => mem_supportFinset.mp h1 (pow_apply_eq_self_of_apply_eq_self h2 n)
 
-@[deprecated (since := "2026-11-16")] alias support_pow_le := supportFinset_pow_le
+@[deprecated (since := "2026-11-16")] alias support_pow_le := supportFinset_pow_subset
 
 @[simp]
 theorem supportFinset_inv (σ : Perm α) : supportFinset σ⁻¹ = σ.supportFinset := by
@@ -137,7 +137,7 @@ theorem apply_mem_supportFinset {x : α} : f x ∈ f.supportFinset ↔ x ∈ f.s
 @[deprecated (since := "2026-11-16")] alias apply_mem_support := apply_mem_supportFinset
 
 /-- The support of a permutation is invariant -/
-theorem isInvariant_of_supportFinset_le {c : Perm α} {s : Finset α} (hcs : c.supportFinset ≤ s)
+theorem isInvariant_of_supportFinset_subset {c : Perm α} {s : Finset α} (hcs : c.supportFinset ⊆ s)
     (x : α) :
     c x ∈ s ↔ x ∈ s := by
   by_cases hx' : x ∈ c.supportFinset
@@ -145,14 +145,14 @@ theorem isInvariant_of_supportFinset_le {c : Perm α} {s : Finset α} (hcs : c.s
   · rw [notMem_supportFinset.mp hx']
 
 @[deprecated (since := "2026-11-16")] alias isInvariant_of_support_le :=
-    isInvariant_of_supportFinset_le
+    isInvariant_of_supportFinset_subset
 
 /-- A permutation c is the extension of a restriction of g to s
   iff its support is contained in s and its restriction is that of g -/
-lemma ofSubtype_eq_iff {g c : Equiv.Perm α} {s : Finset α}
+lemma ofSubtype_eq_iff_supportFinset_subset {g c : Equiv.Perm α} {s : Finset α}
     (hg : ∀ x, g x ∈ s ↔ x ∈ s) :
     ofSubtype (g.subtypePerm hg) = c ↔
-      c.supportFinset ≤ s ∧
+      c.supportFinset ⊆ s ∧
       ∀ (hc' : ∀ x, c x ∈ s ↔ x ∈ s), c.subtypePerm hc' = g.subtypePerm hg := by
   simp only [Equiv.ext_iff, subtypePerm_apply, Subtype.mk.injEq, Subtype.forall]
   constructor
@@ -165,11 +165,14 @@ lemma ofSubtype_eq_iff {g c : Equiv.Perm α} {s : Finset α}
     · intro _ a ha
       rw [← h a, ofSubtype_apply_of_mem (p := (· ∈ s)) _ ha, subtypePerm_apply]
   · rintro ⟨hc, h⟩ a
-    specialize h (isInvariant_of_supportFinset_le hc)
+    specialize h (isInvariant_of_supportFinset_subset hc)
     by_cases ha : a ∈ s
     · rw [h a ha, ofSubtype_apply_of_mem (p := (· ∈ s)) _ ha, subtypePerm_apply]
     · rw [ofSubtype_apply_of_not_mem (p := (· ∈ s)) _ ha, eq_comm, ← notMem_supportFinset]
       exact Finset.notMem_mono hc ha
+
+@[deprecated (since := "2026-11-16")] alias ofSubtype_eq_iff :=
+    ofSubtype_eq_iff_supportFinset_subset
 
 theorem supportFinset_ofSubtype {p : α → Prop} [DecidablePred p] (u : Perm (Subtype p)) :
     (ofSubtype u).supportFinset = u.supportFinset.map (Function.Embedding.subtype p) := by
@@ -201,7 +204,7 @@ theorem mem_supportFinset_of_mem_noncommProd_supportFinset {α β : Type*} [Deci
   · simp
   · intro a s ha ih comm hs
     rw [Finset.noncommProd_insert_of_notMem s a f comm ha]
-    apply mt (Finset.mem_of_subset (supportFinset_mul_le _ _))
+    apply mt (Finset.mem_of_subset (supportFinset_mul_subset _ _))
     rw [Finset.notMem_union]
     exact ⟨hs a (s.mem_insert_self a), ih (fun a ha ↦ hs a (Finset.mem_insert_of_mem ha))⟩
 
@@ -250,7 +253,7 @@ theorem Disjoint.disjoint_supportFinset
 
 theorem Disjoint.supportFinset_mul (h : Disjoint f g) :
     (f * g).supportFinset = f.supportFinset ∪ g.supportFinset := by
-  refine le_antisymm (supportFinset_mul_le _ _) fun a => ?_
+  refine le_antisymm (supportFinset_mul_subset _ _) fun a => ?_
   rw [mem_union, mem_supportFinset, mem_supportFinset, mem_supportFinset, mul_apply, ← not_and_or,
     not_imp_not]
   exact
@@ -290,22 +293,22 @@ theorem supportFinset_noncommProd {ι : Type*} {k : ι → Perm α} {s : Finset 
 
 @[deprecated (since := "2026-11-16")] alias support_noncommProd := supportFinset_noncommProd
 
-theorem supportFinset_prod_le (l : List (Perm α)) : l.prod.supportFinset ≤
+theorem supportFinset_prod_subset (l : List (Perm α)) : l.prod.supportFinset ⊆
     (l.map supportFinset).foldr (· ∪ ·) ⊥ := by
   induction l with
   | nil => simp
   | cons hd tl hl =>
     rw [List.prod_cons, List.map_cons, List.foldr_cons]
-    refine (supportFinset_mul_le hd tl.prod).trans ?_
+    refine (supportFinset_mul_subset hd tl.prod).trans ?_
     exact sup_le_sup le_rfl hl
 
-@[deprecated (since := "2026-11-16")] alias support_prod_le := supportFinset_prod_le
+@[deprecated (since := "2026-11-16")] alias support_prod_le := supportFinset_prod_subset
 
-theorem supportFinset_zpow_le (σ : Perm α) (n : ℤ) :
-    (σ ^ n).supportFinset ≤ σ.supportFinset := fun _ h1 =>
+theorem supportFinset_zpow_subset (σ : Perm α) (n : ℤ) :
+    (σ ^ n).supportFinset ⊆ σ.supportFinset := fun _ h1 =>
   mem_supportFinset.mpr fun h2 => mem_supportFinset.mp h1 (zpow_apply_eq_self_of_apply_eq_self h2 n)
 
-@[deprecated (since := "2026-11-16")] alias support_zpow_le := supportFinset_zpow_le
+@[deprecated (since := "2026-11-16")] alias support_zpow_le := supportFinset_zpow_subset
 
 @[simp]
 theorem supportFinset_swap {x y : α} (h : x ≠ y) : supportFinset (swap x y) = {x, y} := by
@@ -326,7 +329,7 @@ theorem supportFinset_swap_mul_swap {x y z : α} (h : List.Nodup [x, y, z]) :
     and_self_iff, List.nodup_nil] at h
   push Not at h
   apply le_antisymm
-  · convert supportFinset_mul_le (swap x y) (swap y z) using 1
+  · convert supportFinset_mul_subset (swap x y) (swap y z) using 1
     rw [supportFinset_swap h.left.left, supportFinset_swap h.right.left]
     simp [-Finset.union_singleton]
   · intro
@@ -405,10 +408,13 @@ theorem eq_on_supportFinset_mem_disjoint {l : List (Perm α)} (h : f ∈ l)
 @[deprecated (since := "2026-11-16")] alias eq_on_support_mem_disjoint :=
     eq_on_supportFinset_mem_disjoint
 
-theorem Disjoint.mono {x y : Perm α} (h : Disjoint f g) (hf : x.supportFinset ≤ f.supportFinset)
+theorem Disjoint.mono_supportFinset {x y : Perm α} (h : Disjoint f g)
+    (hf : x.supportFinset ≤ f.supportFinset)
     (hg : y.supportFinset ≤ g.supportFinset) : Disjoint x y := by
   rw [disjoint_iff_disjoint_supportFinset] at h ⊢
   exact h.mono hf hg
+
+@[deprecated (since := "2026-11-16")] alias Disjoint.mono := Disjoint.mono_supportFinset
 
 theorem supportFinset_le_prod_of_mem {l : List (Perm α)} (h : f ∈ l) (hl : l.Pairwise Disjoint) :
     f.supportFinset ≤ l.prod.supportFinset := by

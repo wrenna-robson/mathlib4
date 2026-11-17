@@ -524,7 +524,7 @@ theorem kerParam_apply {u : Perm (Function.fixedPoints g)}
     have key := cycleFactorsFinset_pairwise_disjoint g a.2 hx ha1
     rw [disjoint_iff_disjoint_supportFinset, Finset.disjoint_left] at key
     obtain ⟨k, hk⟩ := mem_zpowers_iff.mp (v a).2
-    replace ha2 := key (supportFinset_zpow_le a.1 k (hk ▸ ha2))
+    replace ha2 := key (supportFinset_zpow_subset a.1 k (hk ▸ ha2))
     obtain ⟨k, hk⟩ := mem_zpowers_iff.mp (v ⟨g.cycleOf x, hx⟩).2
     rwa [← hk, zpow_apply_mem_supportFinset, notMem_supportFinset, cycleOf_apply_self] at ha2
   · rw [cycleOf_mem_cycleFactorsFinset_iff] at hx

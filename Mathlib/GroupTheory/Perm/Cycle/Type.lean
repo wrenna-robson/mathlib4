@@ -696,7 +696,7 @@ theorem isThreeCycle_swap_mul_swap_same {a b c : α} (ab : a ≠ b) (ac : a ≠ 
   suffices h : supportFinset (swap a b * swap a c) = {a, b, c} by
     rw [← card_supportFinset_eq_three_iff, h]
     simp [ab, ac, bc]
-  apply le_antisymm ((supportFinset_mul_le _ _).trans fun x => _) fun x hx => ?_
+  apply le_antisymm ((supportFinset_mul_subset _ _).trans fun x => _) fun x hx => ?_
   · simp [ab, ac]
   · simp only [mem_supportFinset, coe_mul]
     grind

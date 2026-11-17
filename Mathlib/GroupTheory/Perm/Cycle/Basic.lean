@@ -466,13 +466,13 @@ theorem IsCycle.of_pow {n : ℕ} (h1 : IsCycle (f ^ n))
     IsCycle f := by
   have key : ∀ x : α, (f ^ n) x ≠ x ↔ f x ≠ x := by
     simp_rw [← mem_supportFinset, ← Finset.ext_iff]
-    exact (supportFinset_pow_le _ n).antisymm h2
+    exact (supportFinset_pow_subset _ n).antisymm h2
   obtain ⟨x, hx1, hx2⟩ := h1
   refine ⟨x, (key x).mp hx1, fun y hy => ?_⟩
   obtain ⟨i, _⟩ := hx2 ((key y).mpr hy)
   exact ⟨n * i, by rwa [zpow_mul]⟩
 
--- The lemma `supportFinset_zpow_le` is relevant. It means that `h2` is equivalent to
+-- The lemma `supportFinset_zpow_subset` is relevant. It means that `h2` is equivalent to
 -- `σ.supportFinset = (σ ^ n).supportFinset`, as well as to
 -- `#σ.supportFinset ≤ #(σ ^ n).supportFinset`.
 theorem IsCycle.of_zpow {n : ℤ} (h1 : IsCycle (f ^ n))
@@ -535,7 +535,7 @@ theorem IsCycle.supportFinset_pow_eq_iff (hf : IsCycle f) {n : ℕ} :
     refine hf.ne_one ?_
     rw [← supportFinset_eq_empty_iff, ← h, H, supportFinset_one]
   · intro H
-    apply le_antisymm (supportFinset_pow_le _ n) _
+    apply le_antisymm (supportFinset_pow_subset _ n) _
     intro x hx
     contrapose H
     ext z
@@ -577,7 +577,7 @@ theorem IsCycle.pow_iff [Finite β] {f : Perm β} (hf : IsCycle f) {n : ℕ} :
       have hf' : IsCycle ((f ^ n) ^ m) := by rwa [hm]
       refine hf'.of_pow fun x hx => ?_
       rw [hm]
-      exact supportFinset_pow_le _ n hx
+      exact supportFinset_pow_subset _ n hx
 
 -- TODO: Define a `Set`-valued support to get rid of the `Finite β` assumption
 theorem IsCycle.pow_eq_one_iff [Finite β] {f : Perm β} (hf : IsCycle f) {n : ℕ} :
@@ -1008,7 +1008,7 @@ def subtypePermOfSupportFinset (c : Perm α) : Perm c.supportFinset :=
 /-- Restrict a permutation to a Finset containing its support -/
 def subtypePermOfSupportFinsetLE (c : Perm α) {s : Finset α}
     (hcs : c.supportFinset ⊆ s) : Equiv.Perm s :=
-  subtypePerm c (isInvariant_of_supportFinset_le hcs)
+  subtypePerm c (isInvariant_of_supportFinset_subset hcs)
 
 @[deprecated (since := "2026-11-16")] alias subtypePerm_of_support_le :=
     subtypePermOfSupportFinsetLE
@@ -1074,14 +1074,14 @@ theorem IsCycle.commute_iff {g c : Perm α} (hc : c.IsCycle) :
   by_cases ha : a ∈ c.supportFinset
   · rw [imp_iff_right ha, ofSubtype_subtypePerm_of_mem hc' ha]
   · rw [iff_true_left (fun b ↦ (ha b).elim), ofSubtype_apply_of_not_mem, ← notMem_supportFinset]
-    · exact Finset.notMem_mono (supportFinset_zpow_le c k) ha
+    · exact Finset.notMem_mono (supportFinset_zpow_subset c k) ha
     · exact ha
 
 theorem zpow_eq_ofSubtype_subtypePerm_iff
     {g c : Equiv.Perm α} {s : Finset α}
     (hg : ∀ x, g x ∈ s ↔ x ∈ s) (hc : c.supportFinset ⊆ s) (n : ℤ) :
     c ^ n = ofSubtype (g.subtypePerm hg) ↔
-      c.subtypePerm (isInvariant_of_supportFinset_le hc) ^ n = g.subtypePerm hg := by
+      c.subtypePerm (isInvariant_of_supportFinset_subset hc) ^ n = g.subtypePerm hg := by
   constructor
   · intro h
     ext ⟨x, hx⟩
@@ -1093,7 +1093,7 @@ theorem zpow_eq_ofSubtype_subtypePerm_iff
         subtypePerm_zpow, subtypePerm_apply]
     · rw [ofSubtype_apply_of_not_mem (subtypePerm c _ ^ n) hx,
         ← notMem_supportFinset]
-      exact fun hx' ↦ hx (hc (supportFinset_zpow_le _ _ hx'))
+      exact fun hx' ↦ hx (hc (supportFinset_zpow_subset _ _ hx'))
 
 theorem cycle_zpow_mem_supportFinset_iff {g : Perm α}
     (hg : g.IsCycle) {n : ℤ} {x : α} (hx : g x ≠ x) :

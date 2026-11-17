@@ -619,7 +619,7 @@ lemma supportFinset_zpowers_of_mem_cycleFactorsFinset_le {g : Perm α}
     (v : Perm α).supportFinset ≤ g.supportFinset := by
   obtain ⟨m, hm⟩ := v.prop
   simp only [← hm]
-  exact le_trans (supportFinset_zpow_le _ _) (mem_cycleFactorsFinset_supportFinset_le c.prop)
+  exact le_trans (supportFinset_zpow_subset _ _) (mem_cycleFactorsFinset_supportFinset_le c.prop)
 
 @[deprecated (since := "2026-11-16")] alias support_zpowers_of_mem_cycleFactorsFinset_le :=
     supportFinset_zpowers_of_mem_cycleFactorsFinset_le
@@ -650,7 +650,7 @@ lemma disjoint_ofSubtype_noncommPiCoprod (u : Perm (Function.fixedPoints f))
   · exact disjoint_one_right _
   · intro c _
     simp only [Subgroup.coe_subtype]
-    exact Disjoint.mono (disjoint_ofSubtype_of_memFixedPoints_self u)
+    exact Disjoint.mono_supportFinset (disjoint_ofSubtype_of_memFixedPoints_self u)
       le_rfl (supportFinset_zpowers_of_mem_cycleFactorsFinset_le (v c))
 
 lemma commute_ofSubtype_noncommPiCoprod (u : Perm (Function.fixedPoints f))

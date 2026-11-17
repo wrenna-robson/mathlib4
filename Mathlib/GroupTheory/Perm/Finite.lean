@@ -232,8 +232,8 @@ theorem supportFinset_pow_coprime {σ : Perm α} {n : ℕ} (h : Nat.Coprime n (o
     (σ ^ n).supportFinset = σ.supportFinset := by
   obtain ⟨m, hm⟩ := exists_pow_eq_self_of_coprime h
   exact
-    le_antisymm (supportFinset_pow_le σ n)
-      (le_trans (ge_of_eq congr(supportFinset $hm)) (supportFinset_pow_le (σ ^ n) m))
+    le_antisymm (supportFinset_pow_subset σ n)
+      (le_trans (ge_of_eq congr(supportFinset $hm)) (supportFinset_pow_subset (σ ^ n) m))
 
 @[deprecated (since := "2026-11-16")] alias support_pow_coprime := supportFinset_pow_coprime
 
@@ -266,7 +266,7 @@ lemma supportFinset_closure_subset_union (S : Set (Perm α)) :
   · exact fun x hx ↦ Set.subset_iUnion₂_of_subset x hx subset_rfl
   · simp
   · intro a b ha hb hc hd
-    refine (Finset.coe_subset.mpr (supportFinset_mul_le a b)).trans ?_
+    refine (Finset.coe_subset.mpr (supportFinset_mul_subset a b)).trans ?_
     rw [Finset.coe_union, Set.union_subset_iff]
     exact ⟨hc, hd⟩
   · simp only [supportFinset_inv, imp_self, implies_true]
