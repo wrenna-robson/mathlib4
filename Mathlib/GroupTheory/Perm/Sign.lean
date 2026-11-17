@@ -5,6 +5,7 @@ Authors: Chris Hughes
 -/
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Group.Conj
 public import Mathlib.Algebra.Group.Subgroup.Lattice
 public import Mathlib.Data.Finset.Fin

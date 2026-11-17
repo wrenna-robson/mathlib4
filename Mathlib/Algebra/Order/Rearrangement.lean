@@ -5,6 +5,7 @@ Authors: Mantas Bakšys
 -/
 module
 
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
 public import Mathlib.Algebra.Order.Module.Defs
 public import Mathlib.Algebra.Order.Module.Synonym
 public import Mathlib.GroupTheory.Perm.Support.Basic
