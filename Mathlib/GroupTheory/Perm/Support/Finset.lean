@@ -340,8 +340,8 @@ theorem supportFinset_swap_mul_swap {x y z : α} (h : List.Nodup [x, y, z]) :
 
 @[deprecated (since := "2026-11-16")] alias support_swap_mul_swap := supportFinset_swap_mul_swap
 
-theorem supportFinset_swap_mul_ge_supportFinset_sdiff (f : Perm α) (x y : α) :
-    f.supportFinset \ {x, y} ≤ (swap x y * f).supportFinset := by
+theorem supportFinset_sdiff_subset_supportFinset_swap_mul (f : Perm α) (x y : α) :
+    f.supportFinset \ {x, y} ⊆ (swap x y * f).supportFinset := by
   intro
   simp only [and_imp, Perm.coe_mul, Function.comp_apply, Ne, mem_supportFinset, mem_insert,
     mem_sdiff, mem_singleton]
@@ -351,10 +351,10 @@ theorem supportFinset_swap_mul_ge_supportFinset_sdiff (f : Perm α) (x y : α) :
   exact ha H
 
 @[deprecated (since := "2026-11-16")] alias support_swap_mul_ge_support_sdiff :=
-    supportFinset_swap_mul_ge_supportFinset_sdiff
+    supportFinset_sdiff_subset_supportFinset_swap_mul
 
 @[deprecated (since := "2026-06-03")]
-alias support_swap_mul_ge_support_diff := supportFinset_swap_mul_ge_supportFinset_sdiff
+alias support_swap_mul_ge_support_diff := supportFinset_sdiff_subset_supportFinset_swap_mul
 
 theorem supportFinset_swap_mul_eq (f : Perm α) (x : α) (h : f (f x) ≠ x) :
     (swap x (f x) * f).supportFinset = f.supportFinset \ {x} := by
@@ -409,19 +409,21 @@ theorem eq_on_supportFinset_mem_disjoint {l : List (Perm α)} (h : f ∈ l)
     eq_on_supportFinset_mem_disjoint
 
 theorem Disjoint.mono_supportFinset {x y : Perm α} (h : Disjoint f g)
-    (hf : x.supportFinset ≤ f.supportFinset)
-    (hg : y.supportFinset ≤ g.supportFinset) : Disjoint x y := by
+    (hf : x.supportFinset ⊆ f.supportFinset)
+    (hg : y.supportFinset ⊆ g.supportFinset) : Disjoint x y := by
   rw [disjoint_iff_disjoint_supportFinset] at h ⊢
   exact h.mono hf hg
 
 @[deprecated (since := "2026-11-16")] alias Disjoint.mono := Disjoint.mono_supportFinset
 
-theorem supportFinset_le_prod_of_mem {l : List (Perm α)} (h : f ∈ l) (hl : l.Pairwise Disjoint) :
-    f.supportFinset ≤ l.prod.supportFinset := by
+theorem supportFinset_subset_prod_of_mem {l : List (Perm α)} (h : f ∈ l)
+    (hl : l.Pairwise Disjoint) :
+    f.supportFinset ⊆ l.prod.supportFinset := by
   intro x hx
   rwa [mem_supportFinset, ← eq_on_supportFinset_mem_disjoint h hl _ hx, ← mem_supportFinset]
 
-@[deprecated (since := "2026-11-16")] alias support_le_prod_of_mem := supportFinset_le_prod_of_mem
+@[deprecated (since := "2026-11-16")] alias support_le_prod_of_mem :=
+    supportFinset_subset_prod_of_mem
 
 section ExtendDomain
 
