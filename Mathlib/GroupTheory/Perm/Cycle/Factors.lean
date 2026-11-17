@@ -722,7 +722,7 @@ theorem Disjoint.cycleFactorsFinset_mul_eq_union {f g : Perm α} (h : Disjoint f
     exact
       ⟨cycleFactorsFinset_pairwise_disjoint _, cycleFactorsFinset_pairwise_disjoint _,
         fun x hx y hy _ =>
-        h.mono (mem_cycleFactorsFinset_supportFinset_le hx)
+        h.mono_supportFinset (mem_cycleFactorsFinset_supportFinset_le hx)
             (mem_cycleFactorsFinset_supportFinset_le hy)⟩
   · rw [noncommProd_union_of_disjoint h.disjoint_cycleFactorsFinset]
     rw [cycleFactorsFinset_noncommProd, cycleFactorsFinset_noncommProd]
